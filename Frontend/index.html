@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenCycle | Smart Waste Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+        .modal { transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal.hidden { opacity: 0; visibility: hidden; display: none; }
+
+        /* Definisikan keyframes animasi Joyful Bounce */
+        @keyframes joyfulBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            30% { transform: translateY(-15px) scale(0.95); } /* Sedikit mengecil dan naik */
+            50% { transform: translateY(-18px) scale(1.05); } /* Membesar di puncak */
+            70% { transform: translateY(-15px) scale(1); } /* Kembali ke ukuran normal */
+        }
+
+    /* Class yang akan memicu animasi */
+    .animate-bounce-click {
+        animation: joyfulBounce 0.6s ease-out;
+        z-index: 10; /* Pastikan kartu yang sedang bergerak berada di depan kartu lain */
+        position: relative;
+    }
+    /* Desain Container Leaderboard */
+    .leaderboard-container {
+        max-width: 900px;
+        margin: 50px auto;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Efek bayangan melayang */
+        overflow: hidden;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Desain Header Hijau Elegan */
+    .leaderboard-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .leaderboard-header h2 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .leaderboard-header p {
+        margin: 8px 0 0 0;
+        font-size: 15px;
+        opacity: 0.9;
+    }
+
+    /* Desain Tabel */
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .leaderboard-table thead tr {
+        background-color: #f8f9fa;
+        color: #4b5563;
+        font-weight: 600;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .leaderboard-table th, .leaderboard-table td {
+        padding: 18px 20px;
+    }
+
+    .leaderboard-table tbody tr {
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.2s ease; /* Efek transisi halus */
+    }
+
+    .leaderboard-table tbody tr:hover {
+        background-color: #f0fdf4; /* Warna hijau super muda saat di-hover */
+    }
+
+    .leaderboard-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    /* Desain Status Reward (Bentuk Kapsul/Badge) */
+    .reward-badge {
+        background-color: #d1fae5;
+        color: #065f46;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        display: inline-block;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .reward-none {
+        color: #9ca3af;
+        font-size: 14px;
+    }
+    </style>
+</head>
+<body class="overflow-x-hidden text-slate-800">
+
+    <nav class="fixed w-full z-50 glass-card border-b border-white/20 top-0">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="revisi.png" alt="Logo" class="h-10 w-auto">
+                <span class="text-2xl font-bold tracking-tight text-emerald-900">Green<span class="text-emerald-500">Cycle</span></span>
+            </div>
+            <button onclick="toggleModal()" class="px-5 py-2 bg-emerald-600 text-white rounded-full font-bold hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
+                <i class="fas fa-plus mr-2"></i> Tambah Data
+            </button>
+        </div>
+    </nav>
+
+    <section class="relative w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white overflow-hidden pt-28 pb-12">
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-emerald-400 opacity-20 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-teal-300 opacity-20 rounded-full blur-[120px]"></div>
+        </div>
+
+        <div class="z-10 max-w-7xl mx-auto px-6 w-full flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-8" data-aos="zoom-in" data-aos-duration="1000">
+            <div class="w-full lg:w-1/2 flex flex-col items-start text-left">
+                <h3 class="text-xl md:text-2xl font-semibold text-emerald-100 mb-2">
+                    Welcome to GreenCycle
+                </h3>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4">
+                    Sistem Manajemen <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-lime-300">Bank Sampah</span>
+                </h1>
+                <p class="text-emerald-300 font-medium text-lg tracking-wide mb-6">
+                    Smart Waste Management Platform
+                </p>
+
+                <div class="w-16 h-1 bg-emerald-500 mb-8 rounded-full"></div>
+                <p class="text-emerald-50 opacity-90 text-base md:text-lg max-w-lg mb-10 leading-relaxed font-light">
+                    Kelola data warga, pantau setoran, dan wujudkan lingkungan yang lebih bersih melalui teknologi cerdas. Kami fokus pada komposisi data yang tepat untuk membuat pengelolaan sampah menjadi lebih profesional dan terorganisir.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#profil" class="px-8 py-3.5 bg-emerald-500 text-white rounded-lg font-bold hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/40 flex items-center gap-2">
+                        <i class="fas fa-arrow-down"></i> Mulai Jelajahi
+                    </a>
+                    <a href="#" class="px-8 py-3.5 bg-transparent border border-emerald-400 text-emerald-100 rounded-lg font-bold hover:bg-emerald-800/50 transition-all flex items-center gap-2">
+                        Lebih Lanjut
+                    </a>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-1/2 flex justify-center lg:justify-end relative">
+                <div class="absolute right-10 top-1/2 -translate-y-1/2 w-64 h-80 bg-emerald-600/30 rounded-[3rem] -rotate-6 blur-2xl -z-10"></div> 
+                <img src="revisi.png" alt="Hero Logo" class="h-64 md:h-96 lg:h-[32rem] w-auto drop-shadow-2xl brightness-110 object-contain relative z-10 animate-pulse-slow">
+            </div>
+
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 py-12">
+        <div class="text-center mb-10" data-aos="fade-up">
+            <h2 class="text-3xl font-black text-slate-800">Macam Macam Sampah</h2>
+            <p class="text-slate-500">Penjelasan mengenai sampah sampah dan berbagai macam macam sampah</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div id="card-organik" onclick="animateCardClick('card-organik', 'Organik')" class="bg-white rounded-3xl p-8 shadow-lg border-b-4 border-emerald-500 transition-all duration-300 cursor-pointer hover:shadow-2xl" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-3xl transition-transform duration-300">
+                    <i class="fas fa-apple-alt"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-3">Sampah Organik</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Sampah yang mudah membusuk dan dapat diolah menjadi kompos. Membantu mengurangi beban TPA secara signifikan.
+                </p>
+                <div class="space-y-2">
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Sisa Makanan</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Daun Kering</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Kulit Buah</span>
+                </div>
+            </div>
+
+            <div id="card-anorganik" onclick="animateCardClick('card-anorganik', 'Anorganik')" class="bg-white rounded-3xl p-8 shadow-lg border-b-4 border-blue-500 transition-all duration-300 cursor-pointer hover:shadow-2xl" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 text-3xl transition-transform duration-300">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-3">Sampah Anorganik</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Material yang tidak mudah membusuk namun memiliki nilai ekonomi tinggi untuk didaur ulang kembali.
+                </p>
+                <div class="space-y-2">
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Plastik & Botol</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Kertas/Kardus</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Logam & Kaleng</span>
+                </div>
+            </div>
+
+            <div id="card-b3" onclick="animateCardClick('card-b3', 'B3')" class="bg-white rounded-3xl p-8 shadow-lg border-b-4 border-red-500 transition-all duration-300 cursor-pointer hover:shadow-2xl" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-6 text-3xl transition-transform duration-300">
+                    <i class="fas fa-biohazard"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-3">Sampah B3</h3>
+                <p class="text-slate-600 text-sm leading-relaxed mb-6">
+                    Limbah yang memerlukan penanganan khusus karena mengandung bahan kimia berbahaya bagi kesehatan.
+                </p>
+                <div class="space-y-2">
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Baterai</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Lampu Neon</span>
+                    <span class="inline-block px-3 py-1 bg-slate-100 text-slate-500 text-xs rounded-full">Elektronik</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="profil" class="max-w-7xl mx-auto px-6 py-24 relative z-10">
+        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 md:p-12" data-aos="fade-up">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="w-full md:w-1/3 flex justify-center">
+                    <div class="relative w-48 h-48 md:w-72 md:h-72 rounded-full p-2 border-4 border-emerald-100 shadow-2xl bg-white">
+                        <img src="revisi.png" alt="Foto Profil" class="w-full h-full object-cover rounded-full">
+                        <div class="absolute bottom-6 right-6 bg-emerald-500 text-white p-3.5 rounded-full shadow-lg border-4 border-white">
+                            <i class="fas fa-check text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3 text-center md:text-left">
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-700 mb-6 inline-block tracking-widest uppercase">
+                        TEAM DEVELOPMENT
+                    </span>
+                    <h2 class="text-3xl md:text-5xl font-black text-slate-800 mb-6 leading-tight">Kelompok 4</h2>
+                    <div class="space-y-6 mb-8">
+                        <div class="flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
+                            <div class="w-12 h-12 bg-emerald-600 text-white flex items-center justify-center rounded-xl font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg">Muhammad Zhabiansyah Lazuardi</h4>
+                                <p class="text-emerald-600 font-bold text-sm">NRP: 152024216</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
+                            <div class="w-12 h-12 bg-emerald-600 text-white flex items-center justify-center rounded-xl font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-lg">Raka Muhammad Fachrurrazi</h4>
+                                <p class="text-emerald-600 font-bold text-sm">NRP: 152024194</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <div class="flex items-center gap-2 text-slate-600 bg-slate-100 px-5 py-2.5 rounded-xl font-semibold"><i class="fas fa-university text-emerald-500"></i> ITENAS Bandung</div>
+                        <div class="flex items-center gap-2 text-slate-600 bg-slate-100 px-5 py-2.5 rounded-xl font-semibold"><i class="fas fa-envelope text-emerald-500"></i> admin@greencycle.id</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-6 pb-20">
+        <div class="text-center mb-10" data-aos="fade-up">
+            <h2 class="text-3xl font-black text-slate-800">Dashboard Statistik</h2>
+            <p class="text-slate-500">Akumulasi real-time seluruh data setoran warga</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:-translate-y-1 transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                <div class="text-emerald-500 text-3xl mb-4"><i class="fas fa-users bg-emerald-50 p-4 rounded-2xl"></i></div>
+                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Partisipan</p>
+                <h3 id="stat-warga" class="text-4xl font-black text-slate-800 mt-2">0</h3>
+            </div>
+            <div class="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:-translate-y-1 transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                <div class="text-lime-500 text-3xl mb-4"><i class="fas fa-leaf bg-lime-50 p-4 rounded-2xl"></i></div>
+                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Organik</p>
+                <h3 id="stat-organik" class="text-4xl font-black text-slate-800 mt-2">0 <span class="text-lg text-slate-400 font-normal">Kg</span></h3>
+            </div>
+            <div class="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:-translate-y-1 transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div class="text-teal-500 text-3xl mb-4"><i class="fas fa-recycle bg-teal-50 p-4 rounded-2xl"></i></div>
+                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total Anorganik</p>
+                <h3 id="stat-anorganik" class="text-4xl font-black text-slate-800 mt-2">0 <span class="text-lg text-slate-400 font-normal">Kg</span></h3>
+            </div>
+            <div class="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:-translate-y-1 transition duration-300" data-aos="fade-up" data-aos-delay="400">
+                <div class="text-red-500 text-3xl mb-4"><i class="fas fa-biohazard bg-red-50 p-4 rounded-2xl"></i></div>
+                <p class="text-slate-500 text-sm font-bold uppercase tracking-wider">Total B3</p>
+                <h3 id="stat-b3" class="text-4xl font-black text-slate-800 mt-2">0 <span class="text-lg text-slate-400 font-normal">Kg</span></h3>
+            </div>
+        </div>
+    </section>
+
+    <div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h2>🏆 Leaderboard Pahlawan Sampah</h2>
+        <p>Peringkat kontribusi warga dalam menjaga lingkungan</p>
+    </div>
+    <table class="leaderboard-table">
+        <thead>
+            <tr>
+                <th>Peringkat</th>
+                <th>Nama Warga</th>
+                <th>Total Poin</th>
+                <th>Status Reward</th>
+            </tr>
+        </thead>
+        <tbody id="tabelLeaderboard">
+            </tbody>
+    </table>
+    </div>
+
+    <section class="max-w-7xl mx-auto px-6 pb-24">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden" data-aos="fade-up">
+            <div class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50">
+                <div>
+                    <h3 class="font-bold text-xl text-slate-800">Riwayat Setoran Terbaru</h3>
+                    <p class="text-sm text-slate-500">Data live dari Backend Spring Boot</p>
+                </div>
+                <button onclick="loadData()" class="px-6 py-3 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-emerald-600 transition flex items-center gap-2">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-400 text-xs uppercase tracking-widest">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-bold">Tanggal</th>
+                            <th class="px-8 py-5">Nama Warga</th>
+                            <th class="px-8 py-5">Kategori Sampah</th>
+                            <th class="px-8 py-5 text-right">Berat (Kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-100 text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="modalForm" class="modal hidden fixed inset-0 z-[60] flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleModal()"></div>
+        <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl p-8" data-aos="zoom-in" data-aos-duration="300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-slate-800">Input Setoran Baru</h3>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form id="addForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold mb-1.5 text-slate-600">Nama Lengkap Warga</label>
+                    <input type="text" id="inputNama" placeholder="Contoh: Ghinova" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1.5 text-slate-600">Kategori Sampah</label>
+                    <select id="inputKategori" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-emerald-500 transition bg-white">
+                        <option value="Organik">🌿 Organik</option>
+                        <option value="Anorganik">♻️ Anorganik</option>
+                        <option value="B3">☣️ B3 (Bahan Berbahaya)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1.5 text-slate-600">Berat (Kg)</label>
+                    <input type="number" id="inputBerat" placeholder="Contoh: 2.5" step="0.1" required class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:border-emerald-500 transition">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="toggleModal()" class="flex-1 py-4 font-bold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition">Batal</button>
+                    <button type="submit" class="flex-1 py-4 font-bold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+       async function loadData() {
+            try {
+                const response = await fetch('http://localhost:8080/api/setoran');
+                const data = await response.json();
+                
+                let totalOrg = 0, totalAnorg = 0, totalB3 = 0;x 
+                let listWarga = new Set(); 
+                const tableBody = document.getElementById('table-body');
+                tableBody.innerHTML = ''; 
+
+                data.forEach((item) => {
+                    const berat = item.beratTotal || 0;
+                    const kat = item.kategori || 'Organik';
+                    const nama = item.warga ? item.warga.namaWarga : 'Anonim';
+
+                    // 1. TAMBAHKAN LOGIKA FORMAT TANGGAL DI SINI
+                    let tanggalRapi = "-";
+                    if (item.tanggalSetoran) {
+                        const dateObj = new Date(item.tanggalSetoran);
+                        tanggalRapi = dateObj.toLocaleDateString('id-ID', {
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric',
+                            hour: '2-digit', 
+                            minute: '2-digit'
+                        });
+                    }
+
+                    if(kat === 'Organik') totalOrg += berat;
+                    else if(kat === 'Anorganik') totalAnorg += berat;
+                    else if(kat === 'B3') totalB3 += berat;
+                    listWarga.add(nama);
+
+                    let badge = kat === 'Organik' ? 'bg-lime-100 text-lime-700' : (kat === 'Anorganik' ? 'bg-teal-100 text-teal-700' : 'bg-red-100 text-red-700');
+
+                    // 2. PASTIKAN ADA 4 <td> YANG SESUAI URUTAN JUDUL KOLOM
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition group">
+                            <td class="px-8 py-5 text-slate-500 text-sm">${tanggalRapi}</td>
+                            <td class="px-8 py-5 font-bold text-slate-800">${nama}</td>
+                            <td class="px-8 py-5"><span class="px-3 py-1.5 rounded-full text-xs font-bold border ${badge}">${kat}</span></td>
+                            <td class="px-8 py-5 text-right font-mono font-bold text-slate-600 group-hover:text-emerald-600">${berat} Kg</td>
+                            <td class="px-8 py-5 text-center">
+                                <button onclick="hapusData(${item.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Data">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+
+                document.getElementById('stat-warga').innerText = listWarga.size;
+                document.getElementById('stat-organik').innerHTML = `${totalOrg.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+                document.getElementById('stat-anorganik').innerHTML = `${totalAnorg.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+                document.getElementById('stat-b3').innerHTML = `${totalB3.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+            } catch (e) { console.error(e); }
+        }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // 1. INISIALISASI ANIMASI (Ini yang mengembalikan tampilan web Anda yang hilang!)
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 800
+        });
+
+        // 2. Fungsi Buka/Tutup Form
+        function toggleModal() {
+            const modal = document.getElementById('modalForm');
+            modal.classList.toggle('hidden');
+        }
+
+        // 3. Fungsi Animasi Klik Kartu
+        function animateCardClick(cardId, kategori) {
+            const card = document.getElementById(cardId);
+            card.classList.add('animate-bounce-click');
+            
+            document.getElementById('inputKategori').value = kategori;
+            
+            setTimeout(() => {
+                card.classList.remove('animate-bounce-click');
+                toggleModal();
+            }, 600);
+        }
+
+        // 4. Fungsi Mengambil Data dari Backend
+        async function loadData() {
+            try {
+                const response = await fetch('http://localhost:8080/api/setoran');
+                const data = await response.json();
+                
+                let totalOrg = 0, totalAnorg = 0, totalB3 = 0; // <-- Huruf 'x' yang nyasar sudah dihapus!
+                let listWarga = new Set(); 
+                const tableBody = document.getElementById('table-body');
+                tableBody.innerHTML = ''; 
+
+                data.forEach((item) => {
+                    const berat = item.beratTotal || 0;
+                    const kat = item.kategori || 'Organik';
+                    const nama = item.warga ? item.warga.namaWarga : 'Anonim';
+
+                    let tanggalRapi = "-";
+                    if (item.tanggalSetoran) {
+                        const dateObj = new Date(item.tanggalSetoran);
+                        tanggalRapi = dateObj.toLocaleDateString('id-ID', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                    }
+
+                    if(kat === 'Organik') totalOrg += berat;
+                    else if(kat === 'Anorganik') totalAnorg += berat;
+                    else if(kat === 'B3') totalB3 += berat;
+                    listWarga.add(nama);
+
+                    let badge = kat === 'Organik' ? 'bg-lime-100 text-lime-700' : (kat === 'Anorganik' ? 'bg-teal-100 text-teal-700' : 'bg-red-100 text-red-700');
+
+                    tableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition group">
+                            <td class="px-8 py-5 text-slate-500 text-sm">${tanggalRapi}</td>
+                            <td class="px-8 py-5 font-bold text-slate-800">${nama}</td>
+                            <td class="px-8 py-5"><span class="px-3 py-1.5 rounded-full text-xs font-bold border ${badge}">${kat}</span></td>
+                            <td class="px-8 py-5 text-right font-mono font-bold text-slate-600 group-hover:text-emerald-600">${berat} Kg</td>
+                            <td class="px-8 py-5 text-center">
+                                <button onclick="hapusData(${item.id})" class="text-red-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-lg transition" title="Hapus Data">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+
+                document.getElementById('stat-warga').innerText = listWarga.size;
+                document.getElementById('stat-organik').innerHTML = `${totalOrg.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+                document.getElementById('stat-anorganik').innerHTML = `${totalAnorg.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+                document.getElementById('stat-b3').innerHTML = `${totalB3.toFixed(1)} <span class="text-slate-400 font-normal">Kg</span>`;
+            } catch (e) { console.error(e); }
+        }
+
+        // 5. Fungsi Hapus Data
+        async function hapusData(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/setoran/${id}`, { method: 'DELETE' });
+                    if (response.ok) loadData(); 
+                    else alert("Gagal menghapus data.");
+                } catch (error) { alert("Tidak dapat terhubung ke server."); }
+            }
+        }
+
+       // 6. Fungsi Tambah Data
+        document.getElementById('addForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const dataBaru = {
+                namaWarga: document.getElementById('inputNama').value,
+                kategori: document.getElementById('inputKategori').value,
+                beratTotal: parseFloat(document.getElementById('inputBerat').value)
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/setoran', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataBaru)
+                });
+                
+                if (response.ok) {
+                    this.reset();
+                    toggleModal();
+                    loadData();
+                } else {
+                    // --- BAGIAN INI YANG DITAMBAH ---
+                    // Menangkap pesan error spesifik dari Exception Handling Backend
+                    const errorData = await response.text();
+                    alert('Gagal: ' + errorData); 
+                }
+            } catch (error) { 
+                alert('Tidak bisa terhubung ke server Backend. Pastikan Spring Boot menyala!'); 
+            }
+        });
+
+        // 7. Jalankan Otomatis Saat Web Dibuka
+        window.onload = loadData;
+
+        // Fungsi untuk mengambil dan menampilkan data Leaderboard
+        async function loadLeaderboard() {
+        try {
+            // 1. Ambil data dari Backend
+            const response = await fetch('http://localhost:8080/api/setoran/leaderboard');
+            const data = await response.json();
+            
+            // 2. Cari tabel yang kosong tadi menggunakan ID-nya
+            const tbody = document.getElementById('tabelLeaderboard');
+            tbody.innerHTML = ''; // Kosongkan isinya untuk berjaga-jaga
+
+            // 3. Looping (baca data satu per satu) dan buat baris HTML baru
+            data.forEach((item, index) => {
+                
+                // Cek reward
+                let reward = `<span class="reward-none">Belum dapat</span>`;
+                if (item.totalPoin >= 1000) {
+                    let kelipatan = Math.floor(item.totalPoin / 1000);
+                    let uang = kelipatan * 10000;
+                    reward = `<span class="reward-badge">Rp ${uang.toLocaleString('id-ID')}</span>`;
+                }
+
+                // Tambahkan medali
+                let medali = (index + 1);
+                if (index === 0) medali = "🥇 1";
+                else if (index === 1) medali = "🥈 2";
+                else if (index === 2) medali = "🥉 3";
+
+                // 4. Suntikkan data ke dalam tabel HTML
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-size: 18px; font-weight: bold; color: #374151;">${medali}</td>
+                    <td style="font-weight: 500; color: #1f2937; text-transform: capitalize;">${item.namaWarga}</td>
+                    <td style="font-weight: bold; color: #111827; font-size: 16px;">${item.totalPoin.toLocaleString('id-ID')}</td>
+                    <td>${reward}</td>
+                `;
+                tbody.appendChild(tr); // Masukkan baris ini ke dalam <tbody>
+            });
+        } catch (error) {
+            console.error("Gagal memuat leaderboard:", error);
+        }
+    }
+
+    // 5. Perintah untuk langsung menjalankan fungsi di atas saat web dibuka
+    loadLeaderboard();
+    </script>
+    
+
+    <footer class="relative w-full bg-gradient-to-r from-emerald-900 to-teal-800 text-white pt-20 pb-10 overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -mr-20 -mt-20"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            
+            <div class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <img src="logo-kampus.png" alt="Logo Kampus" class="h-12 w-auto brightness-110">
+                    <img src="logo-jurusan.png" alt="Logo Jurusan" class="h-12 w-auto brightness-110 border-l border-white/20 pl-3">
+                </div>
+                <div class="flex items-center gap-2 mt-4">
+                     <img src="revisi.png" alt="Logo Company" class="h-8 w-auto">
+                     <span class="font-bold text-xl tracking-tight text-emerald-300">GreenCycle</span>
+                </div>
+                <p class="text-emerald-100/70 text-sm leading-relaxed">
+                    Solusi digital pengelolaan sampah cerdas untuk lingkungan yang lebih asri dan berkelanjutan. Dikembangkan oleh Kelompok 4.
+                </p>
+                <div class="flex gap-3 pt-2">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-emerald-500 transition-all"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-emerald-500 transition-all"><i class="fab fa-github"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-emerald-500 transition-all"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-6">Tim Pengembang</h4>
+                <ul class="space-y-4 text-emerald-100/80">
+                    <li class="group">
+                        <p class="font-semibold text-white group-hover:text-emerald-300 transition-colors">Muhammad Zhabiansyah Lazuardi</p>
+                        <p class="text-xs">NRP: 15-2024-216</p>
+                    </li>
+                    <li class="group">
+                        <p class="font-semibold text-white group-hover:text-emerald-300 transition-colors">Raka Muhammad Fachrurrazi</p>
+                        <p class="text-xs">NRP: 15-2024-194</p>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-6">Pihak Terkait</h4>
+                <div class="space-y-5 text-emerald-100/80">
+                    <div>
+                        <p class="text-xs uppercase text-emerald-500 font-bold mb-1">Dosen Pengampu</p>
+                        <p class="text-white font-medium">Dr.Uung Ungkawa, S.T., M.T.</p>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase text-emerald-500 font-bold mb-1">Asisten Laboratorium</p>
+                        <p class="text-white font-medium">Delisya Pramesti Fitriya</p><p class="text-white font-medium">Fathurrahman Pratama Putra</p><p class="text-white font-medium">Muhammad Fariz Alfaritzi</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-widest text-sm mb-6">Hubungi Kami</h4>
+                <ul class="space-y-3 text-emerald-100/80 text-sm">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-map-marker-alt mt-1 text-emerald-500"></i>
+                        <span>Kampus ITENAS<br>Jl. PH.H. Mustofa No.23, Bandung</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="fas fa-phone-alt text-emerald-500"></i>
+                        <span>+62 8XX XXXX XXXX</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="fas fa-envelope text-emerald-500"></i>
+                        <span>admin@greencycle.id</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-emerald-200/50 uppercase tracking-widest">
+            <p>© 2026 GreenCycle - Project Tugas Besar</p>
+            <p>Made with <i class="fas fa-heart text-red-500 mx-1"></i> by Kelompok 4</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
