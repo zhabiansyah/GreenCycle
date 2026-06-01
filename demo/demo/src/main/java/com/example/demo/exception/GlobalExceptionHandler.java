@@ -16,8 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleGeneralException(Exception ex) {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "error");
-        response.put("message", "Terjadi kesalahan pada server: " + ex.getMessage());
-        
+        response.put("message", "Terjadi kesalahan pada server: " + ex.getMessage());   
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
